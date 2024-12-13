@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\title{Anomalous Brain State Detection through Magnetic Field Stimulation using Deep Active Inference and Multi-Agent Soft Actor-Critic}
+\author{[Ajith Senthil]}
+\date{[November 7, 2023]}
+
+\begin{document}
+
+\maketitle
+
+\section*{I. INTRODUCTION}
+In the emergent field of cognitive neuroscience, understanding and manipulating brain states represent an area of immense potential. This project explores the application of Deep Active Inference (DAI) for the detection of anomalous brain states and the integration of a Multi-Agent Soft Actor-Critic (mSAC) approach to optimize the stimulation parameters for transcranial magnetic stimulation in a controlled environment.
+
+\section*{II. PROBLEM STATEMENT}
+This project aims to develop an algorithmic system capable of inducing high-entropy magnetic fields to detect and stimulate anomalous brain states, which are indicative of the brain encountering new information. The system will utilize advanced machine learning for artifact removal from EEG data and will be evaluated based on its precision in inducing and detecting these states, while ensuring the safety and physical well-being of subjects.
+
+\section*{III. LITERATURE REVIEW}
+\subsection*{Deep Active Inference (DAI):}
+DAI optimizes the information sampling process and has shown promising results in the early and efficient detection of anomalies in various systems, which is crucial for real-time applications in cognitive neuroscience.
+
+\subsection*{Multi-Agent Soft Actor-Critic (mSAC):}
+mSAC, known for handling large action spaces and multi-agent collaboration, will be adapted to modulate the magnetic stimulation parameters, aiming for the optimal balance between safety and the effective induction of brain state anomalies.
+
+\subsection*{Transcranial Magnetic Stimulation (TMS):}
+TMS studies have historically been used to modulate brain activity. The integration of DAI with TMS promises a novel approach to not only detect but also induce brain state anomalies effectively.
+
+\section*{IV. TECHNICAL APPROACH}
+\subsection*{1. EEG Data Preprocessing and Artifact Removal:}
+Extraction of clean EEG signals through advanced machine learning techniques to identify significant indicators of brain state anomalies.
+
+\subsection*{2. Simulation and Environment Setup:}
+A simulated environment will be created to model the effects of various magnetic field distributions on brain activity. Agents representing different magnetic stimulation parameters will be deployed within this environment.
+
+\subsection*{3. Integration of DAI with mSAC:}
+The DAI algorithm will be trained to detect anomalies in brain states as represented by EEG data. mSAC will be adapted to work with multiple agents, each representing a set of stimulation parameters to ensure comprehensive and safe brain state manipulation.
+
+\subsection*{4. Experiments and Validation:}
+A series of controlled experiments will be conducted to validate the efficacy of the system in detecting and inducing brain state anomalies. The safety of the induced states and the physical well-being of subjects will be meticulously monitored.
+
+\section*{V. INTERMEDIATE/PRELIMINARY RESULTS}
+Preliminary simulations have demonstrated the potential of the DAI algorithm in detecting subtle changes in brain states. Initial integrations with the mSAC algorithm have shown promise in modulating stimulation parameters effectively. Further experiments are required to refine the system and ensure its safety and efficacy.
+
+\section*{REFERENCES}
+\begin{enumerate}
+    \item \textit{Deep Active Inference}: G. Joseph et al., "Anomaly Detection via Deep Active Inference," arXiv preprint arXiv:2105.06288, 2021.
+    \item \textit{Soft Actor-Critic}: Haarnoja, T. et al., "Soft Actor-Critic Algorithms and Applications," arXiv preprint arXiv:1812.05905, 2019.
+    \item \textit{Transcranial Magnetic Stimulation}: Rossi, S. et al., "Safety, ethical considerations, and application guidelines for the use of transcranial magnetic stimulation in clinical practice and research," Clinical Neurophysiology, 2009.
+\end{enumerate}
+
+\end{document}

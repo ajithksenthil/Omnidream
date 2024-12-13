@@ -1,0 +1,81 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\title{Integrated Anomalous Brain State Detection and Information Encoding via Magnetic and Ultrasound Stimulation using Deep Active Inference and Multi-Agent Soft Actor-Critic}
+\author{[Ajith Senthil]}
+\date{[November 7, 2023]}
+
+\begin{document}
+
+\maketitle
+
+
+\section*{I. INTRODUCTION}
+Advancements in cognitive neuroscience have opened avenues for not only understanding brain function but also for intervening with its processes. Our interdisciplinary project ambitiously merges neural engineering with advanced computational methods, specifically Deep Active Inference (DAI) and Multi-Agent Soft Actor-Critic (mSAC). By incorporating transcranial magnetic stimulation (TMS) and transcranial focused ultrasound (tFUS), we aim to pioneer techniques for the dynamic encoding of new information into the brain. The dual-modality stimulation approach proposes to exploit the high spatial resolution of tFUS and the neuro-modulatory effectiveness of TMS, which, when combined with state-of-the-art anomaly detection, holds potential for groundbreaking applications in both therapeutic settings and cognitive enhancement.
+
+
+\section*{II. PROBLEM STATEMENT}
+This project is at the frontier of cognitive neuroscience and neural engineering, aiming to explore and refine methods for inducing controlled hallucinations and encoding new information into the brain. The core objective is to develop an adaptable algorithmic framework capable of interfacing with both transcranial magnetic stimulation (TMS) and transcranial focused ultrasound (tFUS) technologies. These modalities will be tested individually and in tandem to determine their efficacy in producing a wide array of brain state stimulations. Through advanced machine learning techniques and neural modulation, the project will examine the precision, safety, and ethical implications of these stimulation techniques in inducing complex cognitive states and facilitating dynamic learning processes.
+
+
+\section*{III. LITERATURE REVIEW}
+\subsection*{Deep Active Inference (DAI):}
+DAI has been instrumental in optimizing the sampling of information and detecting anomalies. Its application in cognitive neuroscience is anticipated to revolutionize the detection and encoding of new brain states.
+The literature review outlines foundational studies relevant to the project's dual-modality approach of magnetic and ultrasound brain stimulation. The focus is on the induction of self-awareness in dreams through frontal low current stimulation of gamma activity, as explored by Voss et al. (2014), which provides insights into the manipulation of brain states. Concurrently, the real-time dialogue between experimenters and dreamers during REM sleep, as presented by Konkoly et al. (2021), illustrates the potential for dynamic interaction with the dreaming brain, suggesting pathways for information encoding.
+
+Furthermore, studies on lucid dreaming, such as those by Baird et al. (2019) and Dresler et al. (2015), reveal the neural correlates of consciousness within dreams, highlighting the frontopolar cortex's involvement. These findings align with the project's goal of modulating brain regions to induce targeted cognitive states.
+
+In terms of technological synergy, the use of transcranial focused ultrasound (tFUS) for neuromodulation, as discussed by Legon et al. (2018) and Lee et al. (2016), underpins the potential of non-invasive stimulation in altering brain activity. The review of focused ultrasound neuromodulation by Blackmore et al. (2021) further elucidates safety and mechanistic considerations, crucial for the ethical application of these technologies.
+
+Finally, incorporating insights from fMRI and machine learning research, such as semantic information representation across the cerebral cortex by Deniz et al. (2019) and the encoding models for natural speech processing by Huth et al. (2016), provides a framework for understanding and predicting brain activity in response to complex stimuli. This interdisciplinary knowledge forms the backbone of the proposed project, aiming to advance the field of cognitive neuroscience through innovative brain state modulation.
+\section*{IV. TECHNICAL APPROACH}
+
+\subsection*{1. EEG Data Preprocessing and Artifact Removal:}
+EEG data provides a high-resolution temporal signal of brain activity, which is essential for monitoring the effects of magnetic and ultrasound stimulation. Preprocessing will involve several stages:
+
+\begin{itemize}
+    \item Signal Enhancement: Using advanced filtering techniques to amplify brainwave signals while suppressing noise.
+    \item Artifact Rejection: Implementing Independent Component Analysis (ICA) and machine learning classifiers to identify and remove non-brain artifacts from the EEG data, such as those caused by eye movements or muscle activity.
+    \item Feature Extraction: Applying wavelet transforms to extract time-frequency features that are most indicative of brain state changes and conducive to subsequent analysis.
+\end{itemize}
+
+\subsection*{2. Simulation and Environment Setup:}
+To facilitate a controlled and reproducible study of brain state manipulation, we will create a computational model simulating the effects of stimulation on neural activity:
+
+\begin{itemize}
+    \item Neural Network Modeling: Developing biophysically plausible neural network models that simulate the dynamics of brain regions targeted by stimulation.
+    \item Stimulation Environment: Creating a simulated environment that allows for the precise control of magnetic and ultrasound stimulation parameters such as intensity, frequency, and phase.
+    \item Virtual Agents: Deploying virtual agents within this environment, each representing a set of stimulation parameters, will facilitate the exploration of a diverse range of stimulation types and their effects on neural activity.
+\end{itemize}
+
+\subsection*{3. Integration of DAI with mSAC:}
+The integration of Deep Active Inference (DAI) with Multi-Agent Soft Actor-Critic (mSAC) is pivotal for adapting stimulation parameters in real-time based on EEG feedback:
+
+\begin{itemize}
+    \item Anomaly Detection: Utilizing DAI to continuously monitor EEG signals for anomalies indicative of new or altered brain states.
+    \item Policy Optimization: Employing mSAC to optimize the policy for selecting stimulation parameters, ensuring both the effectiveness of inducing desired brain states and adherence to safety constraints.
+    \item Multi-Agent Coordination: Orchestrating the interaction between agents representing different modalities (magnetic and ultrasound) to investigate their combined effect on brain state modulation.
+\end{itemize}
+
+\subsection*{4. Experiments and Validation:}
+A series of rigorous experiments will be conducted to validate the proposed system:
+
+\begin{itemize}
+    \item Safety and Efficacy Trials: Assessing the safety and effectiveness of the stimulation protocols through a phased approach, starting with in silico simulations followed by in vivo trials with human subjects.
+    \item Data Acquisition: Collecting a comprehensive dataset of EEG signals, both in the presence and absence of stimulation, to refine our models and algorithms.
+    \item Statistical Analysis: Employing robust statistical methods to evaluate the success rate of induced brain states and the reliability of the detection algorithms.
+\end{itemize}
+
+\section*{V. INTERMEDIATE/PRELIMINARY RESULTS}
+(Extend this section as per the progress of your project and preliminary results available.)
+
+\section*{REFERENCES}
+\begin{enumerate}
+    \item \textit{Deep Active Inference}: G. Joseph et al., "Anomaly Detection via Deep Active Inference," arXiv preprint arXiv:2105.06288, 2021.
+    \item \textit{Soft Actor-Critic}: Haarnoja, T. et al., "Soft Actor-Critic Algorithms and Applications," arXiv preprint arXiv:1812.05905, 2019.
+    \item \textit{Transcranial Magnetic Stimulation and Transcranial Focused Ultrasound}: Rossi, S. et al., "Safety, ethical considerations, and application guidelines for the use of transcranial magnetic stimulation and focused ultrasound in clinical practice and research," Clinical Neurophysiology, 2009.
+\end{enumerate}
+
+\end{document}
