@@ -1,0 +1,57 @@
+{
+  "bbox_max_mm": [
+    5.299973866359508,
+    3.876810228458237,
+    -1.75
+  ],
+  "bbox_min_mm": [
+    -5.299973866359508,
+    -3.876810228458237,
+    -2.0
+  ],
+  "element_count": 30,
+  "expected_turns": 30,
+  "left_center_mm": [
+    -2.5,
+    0.0
+  ],
+  "right_center_mm": [
+    2.5,
+    0.0
+  ],
+  "spec": {
+    "base_axis_angle_deg": 75.0,
+    "base_gap_mm": 5.0,
+    "casing_distance_mm": 1.0,
+    "casing_thickness_mm": 0.5,
+    "layer_spacing_mm": 0.25,
+    "layers_per_base": 2,
+    "limits": [
+      [
+        -25.0,
+        25.0
+      ],
+      [
+        -25.0,
+        25.0
+      ],
+      [
+        -15.0,
+        15.0
+      ]
+    ],
+    "resolution_mm": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "segments_per_edge": 24,
+    "stimulator_max_didt_as": 250000000.0,
+    "total_turns": 30,
+    "turn_pitch_mm": 0.2,
+    "turns_per_base": 15,
+    "winding_height_mm": 4.0,
+    "winding_width_mm": 7.0,
+    "z_offset_mm": -2.0
+  }
+}

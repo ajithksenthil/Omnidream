@@ -1,0 +1,41 @@
+{
+  "best_run": {
+    "abs_error_vpm": 0.0,
+    "didt_as": 687479035.6513342,
+    "e_max_vpm": 7.2,
+    "rel_error_percent": 0.0,
+    "run_dir": "/Users/ajithsenthil/Desktop/FQ_pitch_materials/RulialSynchronyMatrix/Omnidream/simulations/calibration_ernie_fine/calibration_20260209_111551/didt_6.87479e+08_20260209_111551",
+    "session": "calibration_20260209_111551",
+    "summary_path": "/Users/ajithsenthil/Desktop/FQ_pitch_materials/RulialSynchronyMatrix/Omnidream/simulations/calibration_ernie_fine/calibration_20260209_111551/calibration_summary.json",
+    "target_e_vpm": 7.2
+  },
+  "generated_at": "2026-02-10T14:32:21.144692",
+  "goal": {
+    "target_e_vpm": 7.2,
+    "tolerance_fraction": 0.05,
+    "tolerance_percent": 5.0
+  },
+  "goal_hit_rate_percent": 13.333333333333334,
+  "goal_hits_count": 2,
+  "latest_run": {
+    "didt_as": 687479035.6513342,
+    "e_max_vpm": 6.534257385560335,
+    "run_dir": "/Users/ajithsenthil/Desktop/FQ_pitch_materials/RulialSynchronyMatrix/Omnidream/simulations/position_sweep/pos_P4_Pz/didt_6.87479e+08_20260210_143114",
+    "run_timestamp": "2026-02-10T14:31:14",
+    "session": "pos_P4_Pz",
+    "summary_path": "/Users/ajithsenthil/Desktop/FQ_pitch_materials/RulialSynchronyMatrix/Omnidream/simulations/position_sweep/pos_P4_Pz/calibration_summary.json"
+  },
+  "runs_per_session": {
+    "calibration_20260208_221549": 4,
+    "calibration_20260209_094106": 5,
+    "calibration_20260209_111551": 1,
+    "pos_C4_Cz": 1,
+    "pos_F3_Fz": 1,
+    "pos_F4_Fz": 1,
+    "pos_P3_Pz": 1,
+    "pos_P4_Pz": 1
+  },
+  "sim_root_session_count": 8,
+  "total_runs_discovered": 15,
+  "valid_runs_with_e_max": 15
+}
