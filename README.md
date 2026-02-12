@@ -46,6 +46,16 @@ You can regenerate these plain-language figures with:
 python3 scripts/generate_readme_images.py
 ```
 
+### Hyperscanning concept art
+
+| Resonant bridge (sender to receiver) |
+|---|
+| ![Resonant bridge hyperscanning concept](docs/images/gemini_resonant_bridge.jpg) |
+
+| Global coherence (population-scale integration) |
+|---|
+| ![Global coherence concept](docs/images/gemini_global_coherence.jpg) |
+
 ### Technical architecture diagram
 
 ```mermaid
