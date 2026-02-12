@@ -1,0 +1,69 @@
+coil:
+  total_turns: 30
+  turns_per_base: 15
+  winding_width_mm: 7.0
+  winding_height_mm: 4.0
+  base_gap_mm: 5.0
+  base_axis_angle_deg: 75.0
+  turn_pitch_mm: 0.2
+  layers_per_base: 2
+  layer_spacing_mm: 0.25
+  segments_per_edge: 24
+  z_offset_mm: -2.0
+  stimulator_max_didt_as: 1000000000.0
+  casing_distance_mm: 1.0
+  casing_thickness_mm: 0.5
+  relative_permeability: 75.0
+  wire_diameter_mm: 0.2
+  core_conductivity_sm: 1120000.0
+  coil_resistance_ohm: 2.0
+  self_inductance_h: 5.0e-06
+  effective_loop_area_m2: 2.8e-05
+
+helmet:
+  r_inner_mm: 90.0
+  theta_max_deg: 120.0
+  n_coils: 32
+  min_spacing_mm: 20.0
+  clearance_mm: 5.0
+
+ti:
+  freq_carrier_hz: 1000.0
+  delta_freq_min_hz: 1.0
+  delta_freq_max_hz: 100.0
+  delta_freq_default_hz: 10.0
+  lambda_surface_mean: 1.0
+  lambda_surface_max: 5.0
+  lambda_power: 0.01
+
+nts:
+  tau_m_s: 0.003
+  tau_window_s: 0.005
+  t_guard_s: 0.0002
+  q_pulse: 1.0
+  lambda_surface_max: 5.0
+  lambda_per_pulse: 2.0
+  lambda_power: 0.01
+
+safety:
+  temp_warning_pulsed_c: 40.0
+  temp_critical_pulsed_c: 45.0
+  temp_warning_continuous_c: 38.0
+  temp_critical_continuous_c: 41.0
+  max_current_a: 5.0
+  max_voltage_v: 60.0
+  sar_limit_wkg: 3.2
+  sigma_gm_sm: 0.106
+  rho_tissue_kgm3: 1040.0
+  max_duty_cycle_pulsed: 0.05
+  max_duty_cycle_continuous: 1.0
+  surface_e_threshold_vpm: 7.2
+
+sim:
+  head_mesh_path: ""
+  coil_file_path: ""
+  gm_tag: 2
+  output_root: simulations
+  basis_cache_dir: basis_cache
+  results_dir: results
+  didt_reference_as: 1000000.0

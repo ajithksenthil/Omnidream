@@ -1,0 +1,19 @@
+# Python caches
+__pycache__/
+*/__pycache__/
+*.py[cod]
+
+# Test/cache tooling
+.pytest_cache/
+
+# Generated pipeline and run artifacts
+pipeline_output/
+results/
+simulations/
+
+# Local virtual envs
+.venv/
+venv/
+
+# OS/editor
+.DS_Store

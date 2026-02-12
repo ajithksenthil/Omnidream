@@ -9,23 +9,24 @@
     "summary_path": "/Users/ajithsenthil/Desktop/FQ_pitch_materials/RulialSynchronyMatrix/Omnidream/simulations/calibration_ernie_fine/calibration_20260209_111551/calibration_summary.json",
     "target_e_vpm": 7.2
   },
-  "generated_at": "2026-02-10T14:32:21.144692",
+  "generated_at": "2026-02-10T17:54:40.994970",
   "goal": {
     "target_e_vpm": 7.2,
     "tolerance_fraction": 0.05,
     "tolerance_percent": 5.0
   },
-  "goal_hit_rate_percent": 13.333333333333334,
-  "goal_hits_count": 2,
+  "goal_hit_rate_percent": 20.0,
+  "goal_hits_count": 4,
   "latest_run": {
-    "didt_as": 687479035.6513342,
-    "e_max_vpm": 6.534257385560335,
-    "run_dir": "/Users/ajithsenthil/Desktop/FQ_pitch_materials/RulialSynchronyMatrix/Omnidream/simulations/position_sweep/pos_P4_Pz/didt_6.87479e+08_20260210_143114",
-    "run_timestamp": "2026-02-10T14:31:14",
-    "session": "pos_P4_Pz",
-    "summary_path": "/Users/ajithsenthil/Desktop/FQ_pitch_materials/RulialSynchronyMatrix/Omnidream/simulations/position_sweep/pos_P4_Pz/calibration_summary.json"
+    "didt_as": 800000000.0,
+    "e_max_vpm": 8.37843730688142,
+    "run_dir": "/Users/ajithsenthil/Desktop/FQ_pitch_materials/RulialSynchronyMatrix/Omnidream/simulations/acceptance_calibration/acceptance_calibration_20260211/didt_8e+08_20260210_170515",
+    "run_timestamp": "2026-02-10T17:05:15",
+    "session": "acceptance_calibration_20260211",
+    "summary_path": "/Users/ajithsenthil/Desktop/FQ_pitch_materials/RulialSynchronyMatrix/Omnidream/simulations/acceptance_calibration/acceptance_calibration_20260211/calibration_summary.json"
   },
   "runs_per_session": {
+    "acceptance_calibration_20260211": 5,
     "calibration_20260208_221549": 4,
     "calibration_20260209_094106": 5,
     "calibration_20260209_111551": 1,
@@ -35,7 +36,7 @@
     "pos_P3_Pz": 1,
     "pos_P4_Pz": 1
   },
-  "sim_root_session_count": 8,
-  "total_runs_discovered": 15,
-  "valid_runs_with_e_max": 15
+  "sim_root_session_count": 9,
+  "total_runs_discovered": 20,
+  "valid_runs_with_e_max": 20
 }

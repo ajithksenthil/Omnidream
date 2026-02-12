@@ -1,11 +1,11 @@
 # Project Progress Dashboard
 
-- Generated: `2026-02-10T14:32:21.144692`
-- Sessions discovered: `8`
-- Runs discovered: `15`
-- Valid runs: `15`
+- Generated: `2026-02-10T17:54:40.994970`
+- Sessions discovered: `9`
+- Runs discovered: `20`
+- Valid runs: `20`
 - Goal: `E_max = 7.2 V/m` (tolerance `5.00%`)
-- Goal hit rate: `13.33%`
+- Goal hit rate: `20.00%`
 
 ## Best Run
 - Session `calibration_20260209_111551` | dI/dt `6.87479e+08` A/s | E_max `7.2` V/m
@@ -13,10 +13,11 @@
 - Run dir: `/Users/ajithsenthil/Desktop/FQ_pitch_materials/RulialSynchronyMatrix/Omnidream/simulations/calibration_ernie_fine/calibration_20260209_111551/didt_6.87479e+08_20260209_111551`
 
 ## Latest Run
-- `2026-02-10T14:31:14` | Session `pos_P4_Pz` | dI/dt `6.87479e+08` A/s | E_max `6.53426` V/m
-- Run dir: `/Users/ajithsenthil/Desktop/FQ_pitch_materials/RulialSynchronyMatrix/Omnidream/simulations/position_sweep/pos_P4_Pz/didt_6.87479e+08_20260210_143114`
+- `2026-02-10T17:05:15` | Session `acceptance_calibration_20260211` | dI/dt `8e+08` A/s | E_max `8.37844` V/m
+- Run dir: `/Users/ajithsenthil/Desktop/FQ_pitch_materials/RulialSynchronyMatrix/Omnidream/simulations/acceptance_calibration/acceptance_calibration_20260211/didt_8e+08_20260210_170515`
 
 ## Runs Per Session
+- `acceptance_calibration_20260211`: `5`
 - `calibration_20260208_221549`: `4`
 - `calibration_20260209_094106`: `5`
 - `calibration_20260209_111551`: `1`

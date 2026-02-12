@@ -238,7 +238,7 @@
         {
             "name": "Miniature C-shaped stimulator",
             "brand": "Omnidream",
-            "maxdIdt": 250000000.0
+            "maxdIdt": 1000000000.0
         }
     ],
     "coilModels": [

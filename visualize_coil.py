@@ -1,116 +1,229 @@
-from custom_c_shaped_coil import CShapedCoil, verify_coil
-import simnibs
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+"""Visualisation utilities for Omnidream TMS coil models and field maps.
+
+Provides:
+- 3-D coil wire-path plots (single coil or helmet array)
+- Helmet layout scatter plot
+- TI modulation depth and NTS V_peak field maps
+- NTS firing schedule timing diagrams
+"""
+
+from __future__ import annotations
+
 import os
+from pathlib import Path
 
-def visualize_coil(coil):
-    """
-    Create 3D visualization of the coil design
-    """
-    # Create figure
+import numpy as np
+
+try:
+    import matplotlib
+    matplotlib.use("Agg")  # non-interactive backend
+    import matplotlib.pyplot as plt
+    from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
+    HAS_MPL = True
+except ImportError:
+    HAS_MPL = False
+
+from custom_c_shaped_coil import CoilSpec, build_c_shaped_coil
+
+
+PLOT_DIR = Path(__file__).resolve().parent / "visualizations"
+
+
+def _ensure_plot_dir() -> Path:
+    PLOT_DIR.mkdir(parents=True, exist_ok=True)
+    return PLOT_DIR
+
+
+# ---------------------------------------------------------------------------
+# Single-coil visualisation
+# ---------------------------------------------------------------------------
+
+def visualize_coil(spec: CoilSpec | None = None, save: bool = True) -> None:
+    """Create 3-D visualisation of a single C-shaped coil."""
+    if not HAS_MPL:
+        print("matplotlib not available — skipping coil visualisation.")
+        return
+
+    if spec is None:
+        spec = CoilSpec()
+    coil, summary = build_c_shaped_coil(spec)
+
+    # Extract wire points from all elements
+    all_points = []
+    for el in coil.elements:
+        pts = el.get_points(np.eye(4), apply_deformation=False)
+        all_points.append(pts)
+
     fig = plt.figure(figsize=(12, 8))
-    ax = fig.add_subplot(111, projection='3d')
-    
-    # Get wire positions
-    vertices = coil.coil_vertices
-    
-    # Plot the wire path
-    ax.plot(vertices[:, 0], vertices[:, 1], vertices[:, 2], 'b-', linewidth=1, label='Wire Path')
-    
-    # Add scatter points for better visibility of wire positions
-    ax.scatter(vertices[:, 0], vertices[:, 1], vertices[:, 2], c='r', s=1)
-    
-    # Set labels and title
-    ax.set_xlabel('X (mm)')
-    ax.set_ylabel('Y (mm)')
-    ax.set_zlabel('Z (mm)')
-    ax.set_title('C-Shaped Coil Design')
-    
-    # Convert units to mm for display
-    ax.set_xlim([-5e-3, 5e-3])
-    ax.set_ylim([-5e-3, 5e-3])
-    ax.set_zlim([0, 3e-3])
-    
-    # Add a grid
-    ax.grid(True)
-    
-    # Add legend
-    ax.legend()
-    
-    # Save the plot
-    plot_dir = os.path.join(os.path.expanduser('~/tms_grid_project'), 'visualizations')
-    if not os.path.exists(plot_dir):
-        os.makedirs(plot_dir)
-    plt.savefig(os.path.join(plot_dir, 'coil_design_3d.png'), dpi=300, bbox_inches='tight')
-    
-    # Show different views
-    views = [(0, 0), (90, 0), (0, 90)]  # azim, elev pairs
-    for i, (azim, elev) in enumerate(views):
-        ax.view_init(elev, azim)
-        plt.savefig(os.path.join(plot_dir, f'coil_design_view_{i}.png'), dpi=300, bbox_inches='tight')
-    
-    plt.show()
+    ax = fig.add_subplot(111, projection="3d")
 
-def visualize_field(coil):
-    """
-    Create visualization of the magnetic field
-    """
-    # Create a grid of points for field calculation
-    x = np.linspace(-5e-3, 5e-3, 50)
-    y = np.linspace(-5e-3, 5e-3, 50)
-    X, Y = np.meshgrid(x, y)
-    Z = np.zeros_like(X)
-    
-    # Calculate field magnitude at each point (simplified)
-    field_mag = np.zeros_like(X)
-    for i in range(len(x)):
-        for j in range(len(y)):
-            r = np.sqrt((X[i,j])**2 + (Y[i,j])**2)
-            field_mag[i,j] = coil.didt / (r + 1e-6)  # Simplified field calculation
-    
-    # Create figure for field visualization
-    fig = plt.figure(figsize=(10, 8))
-    ax = fig.add_subplot(111)
-    
-    # Plot field magnitude
-    im = ax.pcolormesh(X*1000, Y*1000, field_mag, shading='auto')
-    plt.colorbar(im, label='Field Magnitude (A/m)')
-    
-    # Set labels
-    ax.set_xlabel('X (mm)')
-    ax.set_ylabel('Y (mm)')
-    ax.set_title('Magnetic Field Magnitude in XY Plane (Z=0)')
-    
-    # Save the plot
-    plot_dir = os.path.join(os.path.expanduser('~/tms_grid_project'), 'visualizations')
-    plt.savefig(os.path.join(plot_dir, 'coil_field.png'), dpi=300, bbox_inches='tight')
-    
-    plt.show()
+    for pts in all_points:
+        ax.plot(pts[:, 0], pts[:, 1], pts[:, 2], "b-", linewidth=0.5)
+
+    ax.set_xlabel("X (mm)")
+    ax.set_ylabel("Y (mm)")
+    ax.set_zlabel("Z (mm)")
+    ax.set_title("C-Shaped Miniature TMS Coil")
+
+    if save:
+        out = _ensure_plot_dir()
+        plt.savefig(out / "coil_design_3d.png", dpi=200, bbox_inches="tight")
+        # Additional views
+        for i, (elev, azim) in enumerate([(0, 0), (90, 0), (0, 90)]):
+            ax.view_init(elev, azim)
+            plt.savefig(out / f"coil_design_view_{i}.png", dpi=200, bbox_inches="tight")
+        print(f"Saved coil plots to {out}")
+
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# Helmet layout
+# ---------------------------------------------------------------------------
+
+def visualize_helmet_layout(
+    positions: np.ndarray,
+    orientations: np.ndarray | None = None,
+    save: bool = True,
+    filename: str = "helmet_layout.png",
+) -> None:
+    """3-D scatter plot of coil positions on the helmet surface."""
+    if not HAS_MPL:
+        return
+
+    fig = plt.figure(figsize=(10, 10))
+    ax = fig.add_subplot(111, projection="3d")
+
+    ax.scatter(
+        positions[:, 0], positions[:, 1], positions[:, 2],
+        c="steelblue", s=60, edgecolors="k", linewidths=0.5,
+    )
+
+    if orientations is not None:
+        scale = 5.0  # arrow length in mm
+        ax.quiver(
+            positions[:, 0], positions[:, 1], positions[:, 2],
+            orientations[:, 0] * scale,
+            orientations[:, 1] * scale,
+            orientations[:, 2] * scale,
+            color="red", alpha=0.6, arrow_length_ratio=0.2,
+        )
+
+    ax.set_xlabel("X (mm)")
+    ax.set_ylabel("Y (mm)")
+    ax.set_zlabel("Z (mm)")
+    ax.set_title(f"Helmet Coil Layout ({len(positions)} coils)")
+
+    if save:
+        out = _ensure_plot_dir()
+        plt.savefig(out / filename, dpi=200, bbox_inches="tight")
+        print(f"Saved helmet layout → {out / filename}")
+
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# TI modulation depth map
+# ---------------------------------------------------------------------------
+
+def visualize_modulation_depth_map(
+    M: np.ndarray,
+    target_idx: int | None = None,
+    save: bool = True,
+    filename: str = "ti_modulation_depth.png",
+) -> None:
+    """1-D or 2-D plot of TI modulation depth across sample points."""
+    if not HAS_MPL:
+        return
+
+    fig, ax = plt.subplots(figsize=(12, 4))
+    ax.plot(M, "b-", linewidth=0.5, alpha=0.7)
+    if target_idx is not None:
+        ax.axvline(target_idx, color="red", linestyle="--", label=f"Target (idx={target_idx})")
+        ax.legend()
+    ax.set_xlabel("Element index")
+    ax.set_ylabel("Modulation depth M(r)")
+    ax.set_title("TI Modulation Depth Across Brain Elements")
+
+    if save:
+        out = _ensure_plot_dir()
+        plt.savefig(out / filename, dpi=200, bbox_inches="tight")
+
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# NTS V_peak map
+# ---------------------------------------------------------------------------
+
+def visualize_v_peak_map(
+    V_peak: np.ndarray,
+    target_idx: int | None = None,
+    save: bool = True,
+    filename: str = "nts_v_peak.png",
+) -> None:
+    """Plot NTS V_peak across sample points."""
+    if not HAS_MPL:
+        return
+
+    fig, ax = plt.subplots(figsize=(12, 4))
+    ax.plot(V_peak, "g-", linewidth=0.5, alpha=0.7)
+    if target_idx is not None:
+        ax.axvline(target_idx, color="red", linestyle="--", label=f"Target (idx={target_idx})")
+        ax.legend()
+    ax.set_xlabel("Element index")
+    ax.set_ylabel("V_peak (a.u.)")
+    ax.set_title("NTS Peak Membrane Potential Across Brain Elements")
+
+    if save:
+        out = _ensure_plot_dir()
+        plt.savefig(out / filename, dpi=200, bbox_inches="tight")
+
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# NTS firing schedule
+# ---------------------------------------------------------------------------
+
+def visualize_firing_schedule(
+    fire_times: np.ndarray,
+    amplitudes: np.ndarray,
+    save: bool = True,
+    filename: str = "nts_firing_schedule.png",
+) -> None:
+    """Timing diagram showing when each coil fires."""
+    if not HAS_MPL:
+        return
+
+    n = len(fire_times)
+    fig, ax = plt.subplots(figsize=(12, max(4, n * 0.3)))
+
+    order = np.argsort(fire_times)
+    for rank, coil_idx in enumerate(order):
+        t = fire_times[coil_idx] * 1e3  # convert to ms
+        a = amplitudes[coil_idx]
+        ax.barh(rank, width=0.1, left=t, height=0.6, color="steelblue", alpha=0.8)
+        ax.text(t + 0.12, rank, f"C{coil_idx} (α={a:.2f})", va="center", fontsize=7)
+
+    ax.set_xlabel("Time (ms)")
+    ax.set_ylabel("Firing order")
+    ax.set_title("NTS Firing Schedule")
+    ax.set_yticks(range(n))
+    ax.set_yticklabels([f"#{i + 1}" for i in range(n)])
+
+    if save:
+        out = _ensure_plot_dir()
+        plt.savefig(out / filename, dpi=200, bbox_inches="tight")
+
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    try:
-        # Create coil
-        print("Creating coil design...")
-        coil_designer = CShapedCoil()
-        coil = coil_designer.create_coil_definition()
-        
-        # Verify coil
-        print("\nVerifying coil properties...")
-        if verify_coil(coil):
-            print("Coil verification successful!")
-        else:
-            print("Coil verification failed!")
-            exit(1)
-        
-        # Visualize coil
-        print("\nCreating visualizations...")
-        visualize_coil(coil)
-        visualize_field(coil)
-        
-        print("\nVisualizations have been saved to the 'visualizations' directory.")
-        
-    except Exception as e:
-        print(f"\nError: {str(e)}")
-        exit(1)
+    print("Creating coil visualisation...")
+    visualize_coil()
+    print("Done.")

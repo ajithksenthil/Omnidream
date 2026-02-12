@@ -47,7 +47,8 @@ class CoilSpec:
     layer_spacing_mm: float = 0.25
     segments_per_edge: int = 24
     z_offset_mm: float = -2.0
-    stimulator_max_didt_as: float = 2.5e8
+    # Keep above calibrated operating point (~6.87e8 A/s).
+    stimulator_max_didt_as: float = 1.0e9
     casing_distance_mm: float = 1.0
     casing_thickness_mm: float = 0.5
     # Field sampling bounds used by SimNIBS when exporting coil fields.
@@ -265,6 +266,12 @@ def parse_args(argv: Iterable[str] | None = None) -> argparse.Namespace:
     p.add_argument("--layers-per-base", type=int, default=2)
     p.add_argument("--layer-spacing-mm", type=float, default=0.25)
     p.add_argument("--segments-per-edge", type=int, default=24)
+    p.add_argument(
+        "--stimulator-max-didt-as",
+        type=float,
+        default=1.0e9,
+        help="Metadata max dI/dt (A/s) recorded in the generated coil file.",
+    )
     return p.parse_args(argv)
 
 
@@ -281,6 +288,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         layers_per_base=args.layers_per_base,
         layer_spacing_mm=args.layer_spacing_mm,
         segments_per_edge=args.segments_per_edge,
+        stimulator_max_didt_as=args.stimulator_max_didt_as,
     )
 
     coil, summary = build_c_shaped_coil(spec)

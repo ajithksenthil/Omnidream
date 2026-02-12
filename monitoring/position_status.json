@@ -7,10 +7,10 @@
       "best_rel_error_percent": 0.0,
       "best_run_dir": "/Users/ajithsenthil/Desktop/FQ_pitch_materials/RulialSynchronyMatrix/Omnidream/simulations/calibration_ernie_fine/calibration_20260209_111551/didt_6.87479e+08_20260209_111551",
       "centre": "C3",
-      "latest_run_timestamp": "2026-02-09T11:15:51",
+      "latest_run_timestamp": "2026-02-10T17:05:15",
       "pos_ydir": "Cz",
       "position_key": "C3 -> Cz",
-      "run_count": 10,
+      "run_count": 15,
       "target_e_vpm": 7.2
     },
     {
@@ -79,12 +79,12 @@
       "target_e_vpm": 7.2
     }
   ],
-  "generated_at": "2026-02-10T14:32:21.145246",
+  "generated_at": "2026-02-10T17:54:40.995394",
   "goal_hits_position_count": 1,
   "goal_hits_position_rate_percent": 16.666666666666668,
   "position_count": 6,
   "runs_per_position": {
-    "C3 -> Cz": 10,
+    "C3 -> Cz": 15,
     "C4 -> Cz": 1,
     "F3 -> Fz": 1,
     "F4 -> Fz": 1,

@@ -3,6 +3,11 @@
 ## Goal
 Build a SimNIBS-based simulation pipeline for a miniature C-shaped TMS coil, grounded in the Dong Song lab paper and aligned with the existing `Omnidream` blueprints.
 
+## System State Reference
+- `Omnidream/Blueprints/system_state_diagram.md` documents the operational state machine, expected artifacts per state, and failure-recovery transitions for this pipeline.
+- `Omnidream/Blueprints/systematic_implementation_plan.md` defines gate-based execution, timeline, metrics, and release criteria.
+- `Omnidream/Blueprints/final_build_constraints.md` defines finalized numeric constraints and acceptance limits for v1 build.
+
 ## Source of truth for coil specs
 
 Primary paper used:

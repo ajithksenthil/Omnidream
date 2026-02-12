@@ -46,7 +46,7 @@
       1.0
     ],
     "segments_per_edge": 24,
-    "stimulator_max_didt_as": 250000000.0,
+    "stimulator_max_didt_as": 1000000000.0,
     "total_turns": 30,
     "turn_pitch_mm": 0.2,
     "turns_per_base": 15,

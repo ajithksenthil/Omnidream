@@ -1,0 +1,9 @@
+{
+  "name": "default_energy_sweep_with_constraints",
+  "spec_type": "world_sequence",
+  "world_ids": [],
+  "n_steps_per_segment": 30,
+  "interpolation": "linear",
+  "safety_mode": "strict",
+  "h_theorem_enforce": true
+}
