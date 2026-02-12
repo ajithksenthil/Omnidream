@@ -28,6 +28,109 @@ The codebase is organized to preserve this end-to-end chain:
 6. World-to-world trajectory synthesis
 7. Atlas construction over the perceptual manifold
 
+## Visual intuition
+
+### 1) End-to-end architecture
+
+```mermaid
+flowchart LR
+  A["Miniature Coil Model (.tcd)"] --> B["SimNIBS Field Simulation"]
+  B --> C["Basis Matrix E(x, coil)"]
+  C --> D["Coupling + Plant Model"]
+  D --> E["Optimization (GA / SAC)"]
+  E --> F["Safety Gating (SAR, Thermal, Current, Voltage)"]
+  F --> G["CP Bridge (World States)"]
+  G --> H["Trajectory Planner"]
+  H --> I["Perceptual Atlas"]
+  I --> J["Executable alpha(t) + Reports"]
+```
+
+### 2) Pipeline stage map
+
+```mermaid
+flowchart TB
+  subgraph P1["Physics Build"]
+    S1["1: Config"]
+    S2["2: Coil Check"]
+    S3["3: Helmet Geometry"]
+    S4["4: Basis Fields"]
+    S5["5: Inductance Matrix"]
+  end
+
+  subgraph P2["Optimization + Control"]
+    S6["6: GA Optimization"]
+    S7["7: Tier-2 Validation Hook"]
+    S8["8: Voltage Compensation"]
+    S9["9: SAC (Optional)"]
+    S10["10: Pipeline Report"]
+  end
+
+  subgraph P3["Analysis + Geometry of Outcomes"]
+    S11["11: Sensitivity"]
+    S12["12: CP Bridge"]
+    S13["13: Trajectory"]
+    S14["14: Atlas"]
+  end
+
+  S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7 --> S8 --> S9 --> S11 --> S12 --> S13 --> S14 --> S10
+```
+
+### 3) Control loop intuition
+
+```mermaid
+sequenceDiagram
+  participant U as "Researcher"
+  participant R as "run_pipeline.py"
+  participant P as "TMSPlant"
+  participant O as "Optimizer (GA/SAC)"
+  participant C as "CP Bridge + Trajectory + Atlas"
+
+  U->>R: "Choose mode/config/constraints"
+  R->>P: "Build forward model and coupling"
+  O->>P: "Propose amplitudes/timings"
+  P-->>O: "Outputs [target, surface, Vm, SAR, T]"
+  O->>R: "Candidate satisfying objective"
+  R->>C: "Map candidate to worlds and paths"
+  C-->>R: "Trajectory alpha(t) + atlas diagnostics"
+  R-->>U: "Artifacts, plots, summaries"
+```
+
+### 4) World-to-trajectory-to-atlas intuition
+
+```mermaid
+flowchart LR
+  W0["World 0 (low energy)"] --> W1["World 17 (mid energy)"] --> W2["World 42 (high integration)"]
+  W0 -. "local chart" .-> C0["Chart 0"]
+  W1 -. "local chart" .-> C1["Chart 17"]
+  W2 -. "local chart" .-> C2["Chart 42"]
+  C0 <--> C1
+  C1 <--> C2
+  C0 --> G["Geodesic / Jacobian-Steered Path"]
+  C2 --> G
+  G --> A["alpha(t), y(t), E(t), phi(t), R(t)"]
+```
+
+### 5) Empirical calibration intuition (from `monitoring/`)
+
+| Calibration scaling | Error convergence |
+|---|---|
+| ![Emax vs dIdt](monitoring/emax_vs_didt.png) | ![Best error over time](monitoring/best_error_over_time.png) |
+
+| Absolute error landscape | Position-level run density |
+|---|---|
+| ![Absolute error vs dIdt](monitoring/abs_error_vs_didt.png) | ![Runs per position](monitoring/runs_per_position.png) |
+
+| Best error by position | Best Emax by position |
+|---|---|
+| ![Best error by position](monitoring/best_error_by_position.png) | ![Best Emax by position](monitoring/best_emax_by_position.png) |
+
+### 6) Refresh visual assets
+
+```bash
+scripts/run_dashboard_refresh.sh
+python3 progress_dashboard.py --sim-root simulations --out-dir monitoring --pipeline-dir pipeline_output
+```
+
 ## Scientific scope
 
 Primary stimulation paradigms:
