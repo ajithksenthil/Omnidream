@@ -39,6 +39,9 @@ scripts/run_v1_full.sh
   Converts `pipeline_output/*.npz` artifacts into `pipeline_output/web/*.json`
   for frontend dashboards.
 
+- `scripts/generate_readme_images.py`
+  Generates plain-language README visuals in `docs/images/` for non-technical readers.
+
 ## Useful Environment Variables
 - `SIMNIBS_PY`  
   SimNIBS Python interpreter path.

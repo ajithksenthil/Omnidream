@@ -30,7 +30,23 @@ The codebase is organized to preserve this end-to-end chain:
 
 ## Visual intuition
 
-### 1) End-to-end architecture
+### Fast picture first (non-technical)
+
+| Big picture | Safety guardrails |
+|---|---|
+| ![Overview pipeline](docs/images/01_overview_pipeline.png) | ![Safety guardrails](docs/images/02_safety_guardrails.png) |
+
+| Many worlds to one path | Typical day workflow |
+|---|---|
+| ![Worlds to trajectory](docs/images/03_worlds_to_trajectory.png) | ![Daily workflow](docs/images/04_daily_workflow.png) |
+
+You can regenerate these plain-language figures with:
+
+```bash
+python3 scripts/generate_readme_images.py
+```
+
+### Technical architecture diagram
 
 ```mermaid
 flowchart LR
@@ -45,7 +61,7 @@ flowchart LR
   I --> J["Executable alpha(t) + Reports"]
 ```
 
-### 2) Pipeline stage map
+### Pipeline stage map
 
 ```mermaid
 flowchart TB
@@ -75,7 +91,7 @@ flowchart TB
   S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7 --> S8 --> S9 --> S11 --> S12 --> S13 --> S14 --> S10
 ```
 
-### 3) Control loop intuition
+### Control loop intuition
 
 ```mermaid
 sequenceDiagram
@@ -95,7 +111,7 @@ sequenceDiagram
   R-->>U: "Artifacts, plots, summaries"
 ```
 
-### 4) World-to-trajectory-to-atlas intuition
+### World-to-trajectory-to-atlas intuition
 
 ```mermaid
 flowchart LR
@@ -110,7 +126,7 @@ flowchart LR
   G --> A["alpha(t), y(t), E(t), phi(t), R(t)"]
 ```
 
-### 5) Empirical calibration intuition (from `monitoring/`)
+### Empirical calibration intuition (from `monitoring/`)
 
 | Calibration scaling | Error convergence |
 |---|---|
@@ -124,11 +140,12 @@ flowchart LR
 |---|---|
 | ![Best error by position](monitoring/best_error_by_position.png) | ![Best Emax by position](monitoring/best_emax_by_position.png) |
 
-### 6) Refresh visual assets
+### Refresh visual assets
 
 ```bash
 scripts/run_dashboard_refresh.sh
 python3 progress_dashboard.py --sim-root simulations --out-dir monitoring --pipeline-dir pipeline_output
+python3 scripts/generate_readme_images.py
 ```
 
 ## Scientific scope
