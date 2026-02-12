@@ -1,118 +1,143 @@
-This guide covers the fundamental concepts, analysis techniques, and control design methods for nonlinear systems.
+# DAI Controller Integration Guide (Omnidream)
 
-Unlike linear control theory, which relies on the principle of superposition (scaling and adding inputs results in scaled and added outputs), **Nonlinear Control Theory** deals with systems where this principle does not hold. Most physical systems are inherently nonlinear; linear control is often just an approximation around a specific operating point.
+This document maps nonlinear control ideas to the actual Omnidream code surface.
+It is implementation-facing: where to plug in, what to compute, and what to test.
 
----
+## Scope
 
-### 1. Mathematical Foundation
+- Plant and physics interfaces: `control_framework.py`
+- Safety limits and operating bounds: `config.py` (`SafetyConfig`)
+- Existing optimization/control loops: `optimal_configuration.py`, `sac_tms_control.py`
+- CP/DAI bridge outputs for high-level objective shaping: `cp_bridge.py`
 
-A nonlinear system is typically described by a set of first-order ordinary differential equations in state-space form:
+## 1) Current Control Stack in Repo
 
-Where:
+### Plant side (already implemented)
 
-*  is the state vector.
-*  is the control input.
-*  is the output.
-*  and  are nonlinear vector fields.
+- `TMSPlant.forward_from_params(amplitudes, **kwargs) -> np.ndarray(5,)`
+  - Returns `[target_metric, surface_metric, membrane_metric, SAR_max, T_max]`
+- `TMSPlant.jacobian_output_wrt_amplitudes(amplitudes, **kwargs) -> np.ndarray(5, N)`
+  - Finite-difference local sensitivity in parameter space
+- `build_cost_function(plant, goal) -> cost_fn(amplitudes, **kwargs)`
+  - Includes soft penalties for SAR and thermal violations
+- `analyse_plant(...)`
+  - Provides Jacobians, SVD spectrum, condition numbers, and linearization summary
 
-#### Unique Nonlinear Phenomena
+### Controller side (already implemented)
 
-Nonlinear systems exhibit behaviors that linear systems cannot:
+- `Controller` ABC in `control_framework.py`
+- `GreedyJacobianController`
+  - Baseline one-step local policy using `J^T w`
 
-* **Multiple Equilibrium Points:** A system can have several stable and unstable resting states (e.g., a pendulum has two: straight down and straight up).
-* **Limit Cycles:** Isolated closed orbits in the state space, representing stable self-sustained oscillations (e.g., a beating heart).
-* **Finite Escape Time:** The state of the system can go to infinity in finite time.
-* **Bifurcation:** A small change in system parameters causes a sudden qualitative change in behavior (e.g., a stable point becomes unstable and a limit cycle is born).
-* **Chaos:** Extreme sensitivity to initial conditions, making long-term prediction impossible despite deterministic equations.
+### Optimizer side (already implemented)
 
----
+- GA-based global search (`optimal_configuration.py`)
+- Optional SAC environments (`sac_tms_control.py`)
+- Trajectory/atlas layers for outcome-space planning (`trajectory.py`, `atlas.py`)
 
-### 2. Analysis Techniques
+## 2) What the New Nonlinear Guidance Changes
 
-Before designing a controller, one must analyze the system's behavior.
+The project already has nonlinear plant behavior and local Jacobian control, but it is missing a
+single, explicit nonlinear closed-loop controller that enforces constraints over a finite horizon.
 
-#### A. Phase Plane Analysis
+Implementation implication:
 
-Used primarily for **2nd-order systems** (two state variables), this graphical method visualizes trajectories of the system states  without solving the differential equations analytically.
+- Keep GA and SAC as global search tools.
+- Add a horizon-based nonlinear controller for online steering and constraint handling.
+- Use CP metrics as optional objective terms, not as hard dynamic constraints initially.
 
-* **Phase Portrait:** A plot of multiple trajectories starting from different initial conditions.
-* **Utility:** It visually reveals limit cycles, equilibrium points, and stability regions.
+## 3) Recommended Controller to Add Next
 
-#### B. Lyapunov Stability Theory
+### Nonlinear MPC (priority 1)
 
-This is the cornerstone of nonlinear control. It allows you to determine stability without solving the differential equation, often by using an energy-like function.
+Reason:
 
-* **Lyapunov Function Candidate :** A scalar function that acts as a generalized "energy" of the system.
-* **The Theorem (Simplified):**
-1. If  (positive definite) for all , and
-2.  (negative definite) along the trajectories of the system...
-...then the system dissipates "energy" and will asymptotically converge to the equilibrium point ().
+- Directly fits existing interfaces (`forward_from_params`, safety limits, cost function).
+- Handles SAR/temperature/current/voltage constraints explicitly.
+- Provides deterministic, debuggable behavior for staged deployment.
 
+Minimal formulation at step `k`:
 
+- Decision: amplitude sequence `alpha[k:k+H-1]`
+- Objective:
+  - maximize target metric
+  - minimize surface metric and control effort
+  - optional regularizer for CP energy terms
+- Constraints (each horizon step):
+  - `SAR <= sar_limit_wkg`
+  - `T <= temp_critical_continuous_c` (or pulsed threshold by mode)
+  - `|I| <= max_current_a`
+  - `|V| <= max_voltage_v`
 
-#### C. Describing Function Analysis
+Apply first action only, then re-solve (receding horizon).
 
-An approximate method used to analyze systems containing a linear part and a nonlinear element (like a relay or saturation) arranged in a feedback loop.
+### Sliding-mode or backstepping (priority 2)
 
-* **Concept:** It approximates the nonlinearity with a "quasi-linear" gain based on the first harmonic of its response to a sinusoidal input.
-* **Utility:** Excellent for predicting limit cycles (oscillations) in feedback loops.
+Use only after NMPC baseline is stable. These need tighter assumptions about model form and can
+introduce chattering or implementation complexity.
 
----
+## 4) Exact Integration Points
 
-### 3. Control Design Methods
+1. New module:
+   - `nonlinear_controller.py`
+   - Add `NonlinearMPCController(Controller)` class
+2. Reuse existing primitives:
+   - `TMSPlant.forward_from_params`
+   - `build_cost_function`
+   - `map_output_vector`
+3. Config extension (optional, recommended):
+   - Add `ControllerConfig` in `config.py`
+   - Fields: horizon, dt, lambda_slew, lambda_power, solver_maxiter
+4. Pipeline hook:
+   - Add optional execution path after Stage 11 (sensitivity) or Stage 13 (trajectory)
+   - Persist output to `pipeline_output/nmpc_schedule.npz`
 
-Designing controllers for nonlinear systems often involves forcing the system to behave linearly or dealing with the nonlinearity directly.
+## 5) Safety Contract for Controller
 
-#### A. Feedback Linearization
+All controller-generated schedules must satisfy:
 
-This technique transforms a nonlinear system into a linear one through a coordinate transformation and a specific control law.
+- electrical:
+  - `|I_i(t)| <= max_current_a`
+  - `|V_i(t)| <= max_voltage_v`
+- bio-safety:
+  - `SAR_max(t) <= sar_limit_wkg`
+  - `T_max(t) <= temp_critical_*`
+- smoothness:
+  - bounded slew `|alpha_i(t+1) - alpha_i(t)|` to avoid abrupt transients
 
-* **Mechanism:** If the system is , we choose a control input  that mathematically "cancels out" the nonlinear terms  and injects a linear term.
-* **Result:** The closed-loop system behaves like a linear chain of integrators, allowing you to use standard linear design techniques (like PID or Pole Placement) on the transformed system.
-* **Drawback:** Requires an extremely accurate model of the physics to cancel terms perfectly.
+If solver cannot find a feasible step:
 
-#### B. Sliding Mode Control (SMC)
+- fallback to last feasible action
+- emit explicit `infeasible_step` event in logs
 
-A robust control method that alters the dynamics of the system by applying a discontinuous control signal.
+## 6) Test Plan (Implementation Gate)
 
-* **Mechanism:** The controller forces the system states to reach and slide along a predefined surface (the "sliding surface") in the state space.
-* **Chattering:** Because the control switches rapidly (high frequency) to keep the state on the surface, it can cause wear in mechanical actuators.
-* **Benefit:** Highly robust against modeling inaccuracies and external disturbances.
+Add tests before enabling by default:
 
-#### C. Backstepping
+- unit:
+  - controller returns bounded actions
+  - infeasible cases trigger fallback path
+- integration:
+  - synthetic TI/NTS/hybrid smoke with NMPC enabled
+  - no safety violations on produced schedule
+- regression:
+  - existing `tests/test_all.py` remains green
+  - SAC-skipped environments remain unaffected when `torch` missing
 
-A recursive design procedure for systems that are in "strict-feedback form" (a chain of subsystems where the output of one is the input to the next).
+## 7) Deliverable Definition
 
-* **Mechanism:** You design a virtual controller for the first subsystem to stabilize it. Then, you "step back" and use the next input to realize that virtual control, stabilizing the next subsystem, and so on, until the actual control input  is designed.
-* **Benefit:** Provides a systematic way to construct a Lyapunov function for the entire system, guaranteeing global stability.
+A "done" nonlinear controller integration means:
 
-#### D. Gain Scheduling
+1. `NonlinearMPCController` merged and callable
+2. Pipeline flag to run it (`--controller nmpc`)
+3. Saved artifacts:
+   - `nmpc_schedule.npz` (amplitudes over time)
+   - `nmpc_metrics.json` (safety and objective traces)
+4. Dashboard plots:
+   - target/surface/SAR/T over time
+   - feasibility status timeline
 
-An engineering approach that applies linear control to nonlinear systems.
+## 8) Immediate Next Task
 
-* **Mechanism:** The nonlinear system is linearized at several different operating points. A linear controller is designed for each point. The control gains are then "scheduled" (interpolated) based on the current operating condition (e.g., an aircraft's speed and altitude).
-
-#### E. Model Predictive Control (MPC)
-
-An optimization-based method.
-
-* **Mechanism:** At every time step, the controller solves an optimization problem (minimizing cost while satisfying constraints) over a finite future horizon using a nonlinear model of the system. It applies the first step of the solution and repeats the process.
-* **Benefit:** explicitly handles constraints on inputs and states (e.g., valve limits, safety boundaries).
-
----
-
-### Summary Table of Design Methods
-
-| Method | Best For | Pros | Cons |
-| --- | --- | --- | --- |
-| **Feedback Linearization** | Robotics, Mechanical arms | Linearity simplifies design | Requires precise model |
-| **Sliding Mode** | Power converters, Underwater vehicles | Extremely robust | High-frequency chattering |
-| **Backstepping** | Systems in "chain" form | Guarantees global stability | Can become mathematically complex |
-| **Gain Scheduling** | Aerospace (Flight control) | Uses simpler linear tools | No guarantee of global stability |
-| **Nonlinear MPC** | Chemical processes, Autonomous driving | Handles constraints explicitly | Computationally expensive |
-
----
-
-### Next Step
-
-Would you like to see a specific derivation example, such as designing a **Sliding Mode Controller** for a simple pendulum or an inverted pendulum?
+Implement `nonlinear_controller.py` with a minimal receding-horizon solver using the existing
+plant API, then add one synthetic smoke test plus one safety regression test.

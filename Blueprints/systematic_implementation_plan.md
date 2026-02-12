@@ -28,6 +28,7 @@ Deliver a reproducible, monitored, and test-gated pipeline for miniature-coil Si
 | `WS5` | Monitoring and Reporting | Publish progress/status artifacts and plots | `progress_dashboard.py`, `monitoring/*` |
 | `WS6` | Deep Targeting Pipeline | Execute TI/NTS/hybrid optimization and controls | `run_pipeline.py`, `optimal_configuration.py`, `sac_tms_control.py` |
 | `WS7` | Verification and Release | Keep tests/smoke checks as release gates | `tests/test_all.py` |
+| `WS8` | Nonlinear DAI Controller | Add horizon-based nonlinear controller with explicit safety constraints | `Blueprints/DAI_controller_guide.md`, `control_framework.py` |
 
 ## Phase Gates
 
@@ -87,8 +88,18 @@ Deliver a reproducible, monitored, and test-gated pipeline for miniature-coil Si
 1. Pipeline summary artifacts emitted.
 2. Mode-specific metrics generated in dashboard when pipeline outputs exist.
 
+### Gate G5B: Nonlinear Controller Baseline
+- Entry: G5 complete in synthetic mode.
+- Actions:
+1. Implement minimal NMPC-style controller path using `TMSPlant.forward_from_params`.
+2. Enforce safety bounds at every predicted step (SAR, thermal, current, voltage).
+3. Emit controller artifacts (`nmpc_schedule`, safety trace, feasibility flags).
+- Exit Evidence:
+1. Synthetic run completes with no safety violations.
+2. Tests added for bounded actions and infeasible-step fallback.
+
 ### Gate G6: Freeze Candidate
-- Entry: Gates G1-G5 complete.
+- Entry: Gates G1-G5B complete.
 - Actions:
 1. Run tests and smoke checks.
 2. Update docs and lock baseline outputs.
@@ -110,7 +121,8 @@ gantt
     G4 Monitoring             :         g4, 2026-02-20, 3d
     section Deep Targeting
     G5 Pipeline Readiness     :         g5, 2026-02-23, 7d
-    G6 Freeze Candidate       :         g6, 2026-03-02, 3d
+    G5B Nonlinear Controller  :         g5b, 2026-03-01, 4d
+    G6 Freeze Candidate       :         g6, 2026-03-05, 3d
 ```
 
 ## Runbook Commands
